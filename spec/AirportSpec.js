@@ -1,38 +1,48 @@
-describe ('Airport', function() {
+describe ('Airport', function(){
 
   var jet;
   var heathrow;
-  beforeEach(function() {
+  beforeEach(function(){
     heathrow = new Airport();
-    jet = new Plane();
+    jet = jasmine.createSpy('jet', ['land']);
   });
 
-  describe('Airport', function() {
 
-    describe('heathrow', function(){
+  describe('heathrow', function(){
 
-      it('heathrow is an instance of the Airport class', function() {
-        expect(heathrow).toBeInstanceOf(Airport);
-      });
+    it('is an instance of the Airport class', function(){
+      expect(heathrow).toBeInstanceOf(Airport);
+    });
 
-      it('heathrow initializes with an empty hangar is as an array', function(){
-        expect(heathrow.hangar).toEqual([]);
-      });
+    it('initializes with an empty hangar is as an array', function(){
+      expect(heathrow._hangar).toEqual([]);
+    });
 
-      it('can store planes in the hangar', function(){
-        expect(heathrow.landPlane(jet)).toContain(jet);
-      });
+    it('can store planes in the hangar', function(){
+      heathrow.clearForLanding(jet);
+      expect(heathrow.viewHangar()).toContain(jet);
+    });
 
+    it('can clear planes for takeoff', function(){
+      heathrow.clearForLanding(jet);
+      heathrow.clearForTakeoff(jet);
+      expect(heathrow.viewHangar()).toEqual([]);
+    });
+
+    it('can check for stormy conditions', function(){
+      expect(heathrow.isStormy()).toBeFalsy();
     });
 
   });
 
-  describe('Plane', function() {
+  describe('under stormy conditions', function(){
 
-    it('jet is an instance of the Plane class', function(){
-      expect(jet).toBeInstanceOf(Plane);
+    it('does not clear planes for takeoff',function(){
+      spyOn(heathrow, 'isStormy').and.returnValue(true);
+      expect(function(){heathrow.clearForTakeoff(jet);}).toThrowError('cannot takeoff during a storm');
     });
 
   });
+
 
 });

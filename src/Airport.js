@@ -1,12 +1,29 @@
+'use strict';
+
 class Airport {
 
   constructor(){
-    this.hangar = []
+    this._hangar = []
   }
 
-  landPlane(plane){
-    this.hangar.push(plane);
-    return this.hangar;
+  viewHangar(){
+    return this._hangar
   }
+
+  clearForLanding(plane){
+    this._hangar.push(plane);
+  }
+
+  clearForTakeoff(plane){
+    if(this.isStormy()) {
+      throw new Error('cannot takeoff during a storm');
+    }
+    this._hangar = [];
+  }
+
+  isStormy(){
+    return false;
+  }
+  
 
 }
